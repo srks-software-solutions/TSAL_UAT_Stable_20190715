@@ -29,7 +29,7 @@ namespace i_facilitylibrary.DAO
             {
                 Repository<tblmachinedetail> lista = new Repository<tblmachinedetail>();
 
-                string qry = "SELECT * FROM [i_facility_tsal].[dbo].[tblmachinedetail] WHERE IsDeleted = 0 ";
+                string qry = "SELECT * FROM [i_facility_tsal].[dbo].[tblmachinedetails] WHERE IsDeleted = 0 ";
                 machinelist = lista.GetList(qry, _connectionFactory.GetConnection);
             }
             catch (Exception ex)
@@ -46,7 +46,7 @@ namespace i_facilitylibrary.DAO
             {
                 Repository<tbluser> lista = new Repository<tbluser>();
 
-                string qry = "SELECT * FROM [i_facility_tsal].[dbo].[tbluser] WHERE MachineID =" + MachineID + " and IsDeleted = 0";
+                string qry = "SELECT * FROM [i_facility_tsal].[dbo].[tblusers] WHERE MachineID =" + MachineID + " and IsDeleted = 0";
                 user = lista.GetFirstOrDefault(qry, _connectionFactory.GetConnection);
             }
             catch (Exception ex)
@@ -131,7 +131,7 @@ namespace i_facilitylibrary.DAO
             {
                 Repository<tbllivehmiscreen> lista = new Repository<tbllivehmiscreen>();
 
-                string qry = "SELECT TOP 1 * [i_facility_tsal].[dbo].[tbllivehmiscreen] WHERE CorrectedDate ='" + CorrectedDate + "' and MachineID=" + MachineID + " and OperatiorID =" + opid + " order by HMIID desc";
+                string qry = "SELECT TOP 1 *from [i_facility_tsal].[dbo].[tbllivehmiscreen] WHERE CorrectedDate ='" + CorrectedDate + "' and MachineID=" + MachineID + " and OperatiorID =" + opid + " order by HMIID desc";
                 liveHMI = lista.GetList(qry, _connectionFactory.GetConnection);
             }
             catch (Exception ex)
@@ -2481,7 +2481,7 @@ namespace i_facilitylibrary.DAO
             {
                 Repository<tblbreakdown> lista = new Repository<tblbreakdown>();
 
-                string qry = "SELECT Project1.BreakdownID, Project1.StartTime, Project1.EndTime, Project1.BreakDownCode, Project1.MachineID, Project1.CorrectedDate, Project1.Shift, Project1.MessageDesc, Project1.MessageCode, Project1.DoneWithRow, Project1.LossCodeID, Project1.LossCode, Project1.LossCodeDesc, Project1.MessageType, Project1.LossCodesLevel, Project1.LossCodesLevel1ID, Project1.LossCodesLevel2ID, Project1.ContributeTo, Project1.IsDeleted, Project1.CreatedOn, Project1.CreatedBy, Project1.ModifiedOn, Project1.ModifiedBy, Project1.EndCode, Project1.DeletedDate FROM(SELECT Extent1.BreakdownID, Extent1.StartTime, Extent1.EndTime, Extent1.BreakDownCode, Extent1.MachineID, Extent1.CorrectedDate,Extent1.Shift, Extent1.MessageDesc, Extent1.MessageCode, Extent1.DoneWithRow, Extent2.LossCodeID, Extent2.LossCode, Extent2.LossCodeDesc, Extent2.MessageType, Extent2.LossCodesLevel, Extent2.LossCodesLevel1ID, Extent2.LossCodesLevel2ID, Extent2.ContributeTo, Extent2.IsDeleted, Extent2.CreatedOn, Extent2.CreatedBy, Extent2.ModifiedOn, Extent2.ModifiedBy, Extent2.EndCode, Extent2.DeletedDate FROM [i_facility_tsal].[dbo].[tblbreakdown] AS Extent1 LEFT OUTER JOIN [i_facility_tsal].[dbo].[tbllossescodes] AS Extent2 ON Extent1.BreakDownCode = Extent2.LossCodeID WHERE (Extent1.MachineID = MachineID AND Extent1.CorrectedDate = CorrectedDate AND Extent1.DoneWithRow = 1)) AS Project1 ORDER BY Project1.StartTime DESC";
+                string qry = "SELECT Project1.BreakdownID, Project1.StartTime, Project1.EndTime, Project1.BreakDownCode, Project1.MachineID, Project1.CorrectedDate, Project1.Shift, Project1.MessageDesc, Project1.MessageCode, Project1.DoneWithRow, Project1.LossCodeID, Project1.LossCode, Project1.LossCodeDesc, Project1.MessageType, Project1.LossCodesLevel, Project1.LossCodesLevel1ID, Project1.LossCodesLevel2ID, Project1.ContributeTo, Project1.IsDeleted, Project1.CreatedOn, Project1.CreatedBy, Project1.ModifiedOn, Project1.ModifiedBy, Project1.EndCode, Project1.DeletedDate FROM(SELECT Extent1.BreakdownID, Extent1.StartTime, Extent1.EndTime, Extent1.BreakDownCode, Extent1.MachineID, Extent1.CorrectedDate,Extent1.Shift, Extent1.MessageDesc, Extent1.MessageCode, Extent1.DoneWithRow, Extent2.LossCodeID, Extent2.LossCode, Extent2.LossCodeDesc, Extent2.MessageType, Extent2.LossCodesLevel, Extent2.LossCodesLevel1ID, Extent2.LossCodesLevel2ID, Extent2.ContributeTo, Extent2.IsDeleted, Extent2.CreatedOn, Extent2.CreatedBy, Extent2.ModifiedOn, Extent2.ModifiedBy, Extent2.EndCode, Extent2.DeletedDate FROM [i_facility_tsal].[dbo].[tblbreakdown] AS Extent1 LEFT OUTER JOIN [i_facility_tsal].[dbo].[tbllossescodes] AS Extent2 ON Extent1.BreakDownCode = Extent2.LossCodeID WHERE (Extent1.MachineID = "+MachineID+" AND Extent1.CorrectedDate = '"+CorrectedDate+"' AND Extent1.DoneWithRow = 1)) AS Project1 ORDER BY Project1.StartTime DESC";
                 return lista.GetList(qry, _connectionFactory.GetConnection);
             }
             catch (Exception ex)

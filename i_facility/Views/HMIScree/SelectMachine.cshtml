@@ -1,4 +1,4 @@
-﻿@model
+﻿
 @{
     ViewBag.Title = "Edit";
 }
@@ -38,7 +38,7 @@
                                     <label class="control-label">Select Machine</label>
                                     <div class="editor-field" style="align-items: center">
                                         @Html.DropDownList("RHID", (SelectList)ViewData["RHID"], "--Select Machine--", new { @id = "RoleID1", @class = "dropdown form-control red dropdown-toggle", style = "width:89.7%;", @name = "RoleID", @required = "required" })
-                                        @Html.ValidationMessageFor(model => model.RHID)
+                                        @*@Html.ValidationMessageFor(model => model.RHID)*@
                                     </div>
                                 </div>
                             </div>

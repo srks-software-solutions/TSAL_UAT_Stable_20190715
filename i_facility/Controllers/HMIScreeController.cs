@@ -37,7 +37,9 @@ namespace i_facility.Controllers
             ViewBag.roleid = Session["RoleID"];
             int opid = Convert.ToInt32(Session["UserId"]);
             //ViewBag.RHID = new SelectList(db.tblmachinedetails.Where(m => m.IsDeleted == 0), "MachineID", "MachineInvNo");
-            ViewBag.RHID = new SelectList(obj.GetMachineDetails2(), "MachineID", "MachineInvNo");
+
+            var machinelist = obj.GetMachineDetails2();
+            ViewBag.RHID = new SelectList(machinelist, "MachineID", "MachineInvNo");
             return View();
         }
 
