@@ -915,7 +915,6 @@
     <Content Include="Content1\Debug\CalOEEDaily.vshost.exe.config" />
     <Content Include="Content1\Debug\CalOEEDaily.vshost.exe.manifest" />
     <Content Include="Content1\jquery-ui-1.12.1.custom\package.json" />
-    <Content Include="Content1\VirtualKeyboard.zip" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="Scripts\jquery-2.1.4.min.map" />
     <None Include="Properties\PublishProfiles\FolderProfile1.pubxml" />

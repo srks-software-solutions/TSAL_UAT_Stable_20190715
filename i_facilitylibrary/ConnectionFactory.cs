@@ -12,7 +12,7 @@ namespace i_facilitylibrary
     {
         //static String ServerName = @"TCP:TSAL-DAS\TSALSQLEXPDAS"; // Server
         static String ServerName = @"10.20.10.65,1433"; // Server
-        //static String ServerName = @"SRKSDEV001-PC\SQLSERVER17"; //Localhost
+        //static String ServerName = @"PAVANKUMARV013\SQL2017EXPDELL"; //Localhost
         static String username = "sa";
         static String password = "srks4$tsal";//server
         //static String password = "srks4$";

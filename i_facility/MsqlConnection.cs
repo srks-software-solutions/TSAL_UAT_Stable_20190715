@@ -14,7 +14,7 @@ namespace i_facility
     {
         #region Local Server
         static String ServerName = @"10.20.10.65,1433"; // Server
-        //static String ServerName = @"SRKSDEV001-PC\SQLSERVER17"; //local
+        //static String ServerName = @"PAVANKUMARV013\SQL2017EXPDELL"; //local
         static String username = "sa";
         static String password = "srks4$tsal";//server
         //static String password = "srks4$";//local

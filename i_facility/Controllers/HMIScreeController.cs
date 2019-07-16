@@ -336,7 +336,7 @@ namespace i_facility.Controllers
 
             ViewBag.item = Session["item"];
 
-            if(ViewBag.item == null)
+            if (ViewBag.item == null)
             {
                 Session["empty"] = 1;
             }
@@ -493,7 +493,7 @@ namespace i_facility.Controllers
                 //    }
                 //}
 
-                if(HMI.Count!=0)
+                if (HMI.Count != 0)
                     isEmptyAvailable = true;
                 if (!isEmptyAvailable)
                 {
@@ -3533,7 +3533,7 @@ namespace i_facility.Controllers
                     int.TryParse(HMIData.Delivered_Qty.ToString(), out DelivQty);
                     int.TryParse(HMIData.ProcessQty.ToString(), out ProcessedQty);
 
-                    
+
 
                     if (TargQty == (DelivQty + ProcessedQty))
                     {
@@ -9284,7 +9284,7 @@ namespace i_facility.Controllers
                 }
 
                 Session["FromDDL"] = 1;
-                
+
 
             }
             else if (WOCount > 1)
@@ -9410,7 +9410,7 @@ namespace i_facility.Controllers
                                         obj1.WorkorderNo = DDL1.WorkOrder;
                                         obj1.OperationNo = DDL1.OperationNo;
                                         obj1.PartNo = DDL1.MaterialDesc;
-                                        obj1.Errmsg = "Select Work Order:"+ DDL1.WorkOrder + " Operation No:" + DDL1.OperationNo + " Part No:"+ DDL1.MaterialDesc + " First";
+                                        obj1.Errmsg = "Select Work Order:" + DDL1.WorkOrder + " Operation No:" + DDL1.OperationNo + " Part No:" + DDL1.MaterialDesc + " First";
                                         HmiList.Add(obj1);
                                         isValid = false;
                                     }
@@ -9573,7 +9573,7 @@ namespace i_facility.Controllers
             string retStatus = "false";
             var machineID = Convert.ToInt32(Session["MachineID"]);
             var CurrentStatusData = obj.GettbllivelossofentriesList4(machineID);
-          
+
             // var CurrentStatusData = db.tbllivelossofentries.Where(m => m.MachineID == machineID && (m.IsScreen == 1 || m.IsStart == 1)).OrderByDescending(m => m.StartDateTime).Take(1).ToList();
             if (CurrentStatusData.Count > 0)
             {
@@ -9950,42 +9950,44 @@ namespace i_facility.Controllers
         {
             _conn = new ConnectionFactory();
             obj = new Dao(_conn);
-
-
-            string[] ids = values.Split(',');
             string retStatus = "false";
-            //var hmidata = dbhmi.tbllivehmiscreens.Where(m => m.HMIID == Hmiid).FirstOrDefault();
-            foreach (var item in ids)
+            if (values != null)
             {
-                int item1 = Convert.ToInt32(item);
-                var hmidata = obj.GetLiveHMIDetails6(item1);
-                if (hmidata != null)
+                string[] ids = values.Split(',');
+               
+                //var hmidata = dbhmi.tbllivehmiscreens.Where(m => m.HMIID == Hmiid).FirstOrDefault();
+                foreach (var item in ids)
                 {
-                    if (string.IsNullOrEmpty(Convert.ToString(hmidata.Date)))
+                    int item1 = Convert.ToInt32(item);
+                    var hmidata = obj.GetLiveHMIDetails6(item1);
+                    if (hmidata != null)
                     {
-                        retStatus = "true";
-                        obj.DeleteHMIScreenDetails(hmidata.HMIID);
-                        //dbhmi.tbllivehmiscreens.Remove(hmidata);
-                        //dbhmi.SaveChanges();
-
-                        if (hmidata.IsMultiWO == 1)
+                        if (string.IsNullOrEmpty(Convert.ToString(hmidata.Date)))
                         {
-                            try
-                            {
-                                obj.GetMWOtDetails(hmidata.HMIID);
-                                //dbhmi.tbllivemultiwoselections.Remove(dbhmi.tbllivemultiwoselections.Where(m => m.HMIID == hmidata.HMIID).FirstOrDefault());
-                                //dbhmi.SaveChanges();
-                            }
-                            catch (Exception e)
-                            {
+                            retStatus = "true";
+                            obj.DeleteHMIScreenDetails(hmidata.HMIID);
+                            //dbhmi.tbllivehmiscreens.Remove(hmidata);
+                            //dbhmi.SaveChanges();
 
+                            if (hmidata.IsMultiWO == 1)
+                            {
+                                try
+                                {
+                                    obj.GetMWOtDetails(hmidata.HMIID);
+                                    //dbhmi.tbllivemultiwoselections.Remove(dbhmi.tbllivemultiwoselections.Where(m => m.HMIID == hmidata.HMIID).FirstOrDefault());
+                                    //dbhmi.SaveChanges();
+                                }
+                                catch (Exception e)
+                                {
+
+                                }
                             }
+
                         }
-
-                    }
-                    else
-                    {
-                        retStatus = "You cannnot remove WorkOrder Once its Started.";
+                        else
+                        {
+                            retStatus = "You cannnot remove WorkOrder Once its Started.";
+                        }
                     }
                 }
             }
@@ -10819,549 +10821,550 @@ namespace i_facility.Controllers
         }
 
         #region  commented by monika
-        //public ActionResult IndividualSubmit(int HMIID = 0)
-        //{
-        //    _conn = new ConnectionFactory();
-        //    obj = new Dao(_conn);
+        public ActionResult IndividualSubmit(int HMIID = 0)
+        {
+            _conn = new ConnectionFactory();
+            obj = new Dao(_conn);
 
-        //    if ((Session["UserId"] == null) || (Session["UserId"].ToString() == String.Empty))
-        //    {
-        //        return RedirectToAction("Login", "Login", null);
-        //    }
+            if ((Session["UserId"] == null) || (Session["UserId"].ToString() == String.Empty))
+            {
+                return RedirectToAction("Login", "Login", null);
+            }
 
-        //    //if (IDLEorGenericWorkisON())
-        //    //{
-        //    //    Session["Error"] = "Please End IDLE/GenericWork Before Selecting New Work Orders";
-        //    //    return RedirectToAction("Index");
-        //    //}
+            //if (IDLEorGenericWorkisON())
+            //{
+            //    Session["Error"] = "Please End IDLE/GenericWork Before Selecting New Work Orders";
+            //    return RedirectToAction("Index");
+            //}
 
-        //    ViewBag.Logout = Session["Username"];
-        //    ViewBag.roleid = Session["RoleID"];
-        //    int MachineId = Convert.ToInt32(Session["MachineID"]);
+            ViewBag.Logout = Session["Username"];
+            ViewBag.roleid = Session["RoleID"];
+            int MachineId = Convert.ToInt32(Session["MachineID"]);
 
-        //    //Check if similar WorkOrder is in View
-        //    //tbllivehmiscreen hmiidDataDup = db.tbllivehmiscreens.Where(m => m.HMIID == HMIID).FirstOrDefault();
-        //    tbllivehmiscreen hmiidDataDup = obj.GetLiveHMIDetails6(HMIID);
-        //    if (hmiidDataDup != null)
-        //    {
-        //        int hmiid = Convert.ToInt32(hmiidDataDup.HMIID);
-        //        string woNo = Convert.ToString(hmiidDataDup.Work_Order_No);
-        //        string opNo = Convert.ToString(hmiidDataDup.OperationNo);
-        //        string partNo = Convert.ToString(hmiidDataDup.PartNo);
+            //Check if similar WorkOrder is in View
+            //tbllivehmiscreen hmiidDataDup = db.tbllivehmiscreens.Where(m => m.HMIID == HMIID).FirstOrDefault();
+            tbllivehmiscreen hmiidDataDup = obj.GetLiveHMIDetails6(HMIID);
+            if (hmiidDataDup != null)
+            {
+                int hmiid = Convert.ToInt32(hmiidDataDup.HMIID);
+                string woNo = Convert.ToString(hmiidDataDup.Work_Order_No);
+                string opNo = Convert.ToString(hmiidDataDup.OperationNo);
+                string partNo = Convert.ToString(hmiidDataDup.PartNo);
 
-        //        //cheack in DDL if isCompleted = 1
-        //        //var DDLCompletedData = db.tblddls.Where(m => m.WorkOrder == woNo && m.MaterialDesc == partNo && m.OperationNo == opNo && m.IsCompleted == 1).FirstOrDefault();
-        //        var DDLCompletedData = obj.GettblddlDetails(woNo, partNo, opNo);
-        //        if (DDLCompletedData != null)
-        //        {
-        //            Session["Error"] = "Job is Finished for WorkOrder:" + woNo + " OpNo: " + opNo + " PartNo:" + partNo;
+                //cheack in DDL if isCompleted = 1
+                //var DDLCompletedData = db.tblddls.Where(m => m.WorkOrder == woNo && m.MaterialDesc == partNo && m.OperationNo == opNo && m.IsCompleted == 1).FirstOrDefault();
+                var DDLCompletedData = obj.GettblddlDetails(woNo, partNo, opNo);
+                if (DDLCompletedData != null)
+                {
+                    Session["Error"] = "Job is Finished for WorkOrder:" + woNo + " OpNo: " + opNo + " PartNo:" + partNo;
 
-        //            //db.tbllivehmiscreens.Remove(hmiidDataDup);
-        //            //db.SaveChanges();
-        //            obj.DeleteHMIScreenDetails(hmiidDataDup.HMIID);
-        //            return RedirectToAction("Index");
-        //        }
+                    //db.tbllivehmiscreens.Remove(hmiidDataDup);
+                    //db.SaveChanges();
+                    obj.DeleteHMIScreenDetails(hmiidDataDup.HMIID);
+                    return RedirectToAction("Index");
+                }
 
-        //        //2017-06-22
-        //        //var HMICompletedData = db.tbllivehmiscreens.Where(m => m.Work_Order_No == woNo && m.PartNo == partNo && m.OperationNo == opNo && m.isWorkInProgress == 1).FirstOrDefault();
-        //        var HMICompletedData = obj.GetLiveHMIDetails2(woNo, partNo, opNo);
-        //        if (HMICompletedData != null)
-        //        {
-        //            Session["Error"] = "Job is Finished for WorkOrder:" + woNo + " OpNo: " + opNo + " PartNo:" + partNo;
+                //2017-06-22
+                //var HMICompletedData = db.tbllivehmiscreens.Where(m => m.Work_Order_No == woNo && m.PartNo == partNo && m.OperationNo == opNo && m.isWorkInProgress == 1).FirstOrDefault();
+                var HMICompletedData = obj.GetLiveHMIDetails2(woNo, partNo, opNo);
+                if (HMICompletedData != null)
+                {
+                    Session["Error"] = "Job is Finished for WorkOrder:" + woNo + " OpNo: " + opNo + " PartNo:" + partNo;
 
-        //            //db.tbllivehmiscreens.Remove(hmiidDataDup);
-        //            //db.SaveChanges();
-        //            obj.DeleteHMIScreenDetails(hmiidDataDup.HMIID);
-        //            return RedirectToAction("Index");
-        //        }
+                    //db.tbllivehmiscreens.Remove(hmiidDataDup);
+                    //db.SaveChanges();
+                    obj.DeleteHMIScreenDetails(hmiidDataDup.HMIID);
+                    return RedirectToAction("Index");
+                }
 
-        //        #region 2017-02-07
-        //        bool isValid = true, IsInHMI = true;
-        //        string IssueMsg = null;
-        //        if (isValid)
-        //        {
-        //            //var Siblingddldata = db.tblddls.Where(m => m.IsCompleted == 0 && m.WorkOrder == woNo && m.MaterialDesc == partNo && m.OperationNo != opNo && m.IsCompleted == 0).OrderBy(m => new { m.WorkOrder, m.MaterialDesc, m.OperationNo }).ToList();
-        //            var Siblingddldata = obj.GetddlDetails(woNo, partNo, opNo);
-        //            foreach (var row in Siblingddldata)
-        //            {
-        //                IsInHMI = true; //reinitialize
-        //                int localOPNo = Convert.ToInt32(row.OperationNo);
-        //                string localOPNoString = Convert.ToString(row.OperationNo);
-        //                if (localOPNo < Convert.ToInt32(opNo))
-        //                {
-        //                    #region //Here Check in HMIScreen Table. There are chances that this one is started prior to this round of ddl selection ,
-        //                    //which case is valid.
-        //                    //var SiblingHMIdata = db.tbllivehmiscreens.Where(m => m.Work_Order_No == woNo && m.PartNo == partNo && m.OperationNo == localOPNoString).FirstOrDefault();
-        //                    var SiblingHMIdata = obj.GetLive1HMIDetails(woNo, partNo, Convert.ToString(localOPNo));
-        //                    //var SiblingHMIdatahistorian = db.tblhmiscreens.Where(m => m.Work_Order_No == woNo && m.PartNo == partNo && m.OperationNo == localOPNoString).FirstOrDefault(); //added by Ashok
-        //                    var SiblingHMIdatahistorian = obj.GetHMIDetails1(woNo, partNo, Convert.ToString(localOPNo));
-        //                    if (SiblingHMIdata == null || SiblingHMIdatahistorian == null)
-        //                    {
-        //                        //IssueMsg = "Please Select Below WorkOrder, WONo: " + WONo + " PartNo: " + Part + " OperationNo: " + localOPNo;
-        //                        IsInHMI = false;
-        //                        //break;
-        //                    }
-        //                    else
-        //                    {
-        //                        if (SiblingHMIdata.Date == null)//|| SiblingHMIdatahistorian.Date==null) //=> lower OpNo is not submitted.
-        //                        {
-        //                            IssueMsg = " Start WONo: " + row.WorkOrder + " and PartNo: " + row.MaterialDesc + " and OperationNo: " + localOPNoString;
-        //                            //return RedirectToAction("Index");
-        //                            IsInHMI = false;
-        //                            break;
-        //                        }
-        //                        if (SiblingHMIdatahistorian != null)
-        //                        {
-        //                            if (SiblingHMIdatahistorian.Date == null)//|| SiblingHMIdatahistorian.Date==null) //=> lower OpNo is not submitted.
-        //                            {
-        //                                IssueMsg = " Start WONo: " + row.WorkOrder + " and PartNo: " + row.MaterialDesc + " and OperationNo: " + localOPNoString;
-        //                                //return RedirectToAction("Index");
-        //                                IsInHMI = false;
-        //                                break;
-        //                            }
-        //                        }
-        //                    }
-        //                    #endregion
+                #region 2017-02-07
+                bool isValid = true, IsInHMI = true;
+                string IssueMsg = null;
+                if (isValid)
+                {
+                    //var Siblingddldata = db.tblddls.Where(m => m.IsCompleted == 0 && m.WorkOrder == woNo && m.MaterialDesc == partNo && m.OperationNo != opNo && m.IsCompleted == 0).OrderBy(m => new { m.WorkOrder, m.MaterialDesc, m.OperationNo }).ToList();
+                    var Siblingddldata = obj.GetddlDetails(woNo, partNo, opNo);
+                    foreach (var row in Siblingddldata)
+                    {
+                        IsInHMI = true; //reinitialize
+                        int localOPNo = Convert.ToInt32(row.OperationNo);
+                        string localOPNoString = Convert.ToString(row.OperationNo);
+                        if (localOPNo < Convert.ToInt32(opNo))
+                        {
+                            #region //Here Check in HMIScreen Table. There are chances that this one is started prior to this round of ddl selection ,
+                            //which case is valid.
+                            //var SiblingHMIdata = db.tbllivehmiscreens.Where(m => m.Work_Order_No == woNo && m.PartNo == partNo && m.OperationNo == localOPNoString).FirstOrDefault();
+                            var SiblingHMIdata = obj.GetLive1HMIDetails(woNo, partNo, Convert.ToString(localOPNo));
+                            //var SiblingHMIdatahistorian = db.tblhmiscreens.Where(m => m.Work_Order_No == woNo && m.PartNo == partNo && m.OperationNo == localOPNoString).FirstOrDefault(); //added by Ashok
+                            var SiblingHMIdatahistorian = obj.GetHMIDetails1(woNo, partNo, Convert.ToString(localOPNo));
+                            if (SiblingHMIdata == null || SiblingHMIdatahistorian == null)
+                            {
+                                //IssueMsg = "Please Select Below WorkOrder, WONo: " + WONo + " PartNo: " + Part + " OperationNo: " + localOPNo;
+                                IsInHMI = false;
+                                //break;
+                            }
+                            else
+                            {
+                                if (SiblingHMIdata.Date == null)//|| SiblingHMIdatahistorian.Date==null) //=> lower OpNo is not submitted.
+                                {
+                                    IssueMsg = " Start WONo: " + row.WorkOrder + " and PartNo: " + row.MaterialDesc + " and OperationNo: " + localOPNoString;
+                                    //return RedirectToAction("Index");
+                                    IsInHMI = false;
+                                    break;
+                                }
+                                if (SiblingHMIdatahistorian != null)
+                                {
+                                    if (SiblingHMIdatahistorian.Date == null)//|| SiblingHMIdatahistorian.Date==null) //=> lower OpNo is not submitted.
+                                    {
+                                        IssueMsg = " Start WONo: " + row.WorkOrder + " and PartNo: " + row.MaterialDesc + " and OperationNo: " + localOPNoString;
+                                        //return RedirectToAction("Index");
+                                        IsInHMI = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            #endregion
 
-        //                    if (!IsInHMI)
-        //                    {
-        //                        #region //also check in MultiWO table
-        //                        //string WIPQueryMultiWO = @"SELECT * from tbllivemultiwoselection where WorkOrder = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo = '" + localOPNo + "' order by MultiWOID limit 1 ";
-        //                        //var WIPMWO = db.tbllivemultiwoselections.SqlQuery(WIPQueryMultiWO).ToList();
-        //                        var WIPMWO = obj.GetMultiWOtDetails(woNo, partNo, Convert.ToString(localOPNo));
-        //                        //string WIPQueryMultiWOHistorian = @"SELECT * from tbl_multiwoselection where WorkOrder = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo = '" + localOPNo + "' order by MultiWOID limit 1 ";
-        //                        //var WIPMWOHistorian = db.tbl_multiwoselection.SqlQuery(WIPQueryMultiWOHistorian).ToList();
-        //                        var WIPMWOHistorian = obj.GetMultiWorkSelectionDetails(woNo, partNo, Convert.ToString(localOPNo));
-        //                        if (WIPMWO.Count == 0 || WIPMWOHistorian.Count == 0)
-        //                        {
-        //                            IssueMsg = " Select  WONo: " + row.WorkOrder + " and PartNo: " + row.MaterialDesc + " and OperationNo: " + localOPNoString;
-        //                            //return RedirectToAction("Index");
-        //                            IsInHMI = false;
-        //                            break;
-        //                        }
+                            if (!IsInHMI)
+                            {
+                                #region //also check in MultiWO table
+                                //string WIPQueryMultiWO = @"SELECT * from tbllivemultiwoselection where WorkOrder = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo = '" + localOPNo + "' order by MultiWOID limit 1 ";
+                                //var WIPMWO = db.tbllivemultiwoselections.SqlQuery(WIPQueryMultiWO).ToList();
+                                var WIPMWO = obj.GetMultiWOtDetails(woNo, partNo, Convert.ToString(localOPNo));
+                                //string WIPQueryMultiWOHistorian = @"SELECT * from tbl_multiwoselection where WorkOrder = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo = '" + localOPNo + "' order by MultiWOID limit 1 ";
+                                //var WIPMWOHistorian = db.tbl_multiwoselection.SqlQuery(WIPQueryMultiWOHistorian).ToList();
+                                var WIPMWOHistorian = obj.GetMultiWorkSelectionDetails(woNo, partNo, Convert.ToString(localOPNo));
+                                if (WIPMWO.Count == 0 || WIPMWOHistorian.Count == 0)
+                                {
+                                    IssueMsg = " Select  WONo: " + row.WorkOrder + " and PartNo: " + row.MaterialDesc + " and OperationNo: " + localOPNoString;
+                                    //return RedirectToAction("Index");
+                                    IsInHMI = false;
+                                    break;
+                                }
 
-        //                        foreach (var rowHMI in WIPMWO)
-        //                        {
-        //                            int hmiidInner = Convert.ToInt32(rowHMI.HMIID);
-        //                            //var MWOHMIData = db.tbllivehmiscreens.Where(m => m.HMIID == hmiidInner).FirstOrDefault();
-        //                            var MWOHMIData = obj.GetLiveHMIDetails7(hmiidInner);
-        //                            if (MWOHMIData != null) //obviously != 0
-        //                            {
-        //                                if (MWOHMIData.Date == null) //=> lower OpNo is not submitted.
-        //                                {
-        //                                    IssueMsg = " Start WONo: " + row.WorkOrder + " and PartNo: " + row.MaterialDesc + " and OperationNo: " + localOPNoString;
-        //                                    //return RedirectToAction("Index");
-        //                                    break;
-        //                                }
-        //                                else
-        //                                {
-        //                                    IsInHMI = true;
-        //                                }
-        //                            }
-        //                        }
+                                foreach (var rowHMI in WIPMWO)
+                                {
+                                    int hmiidInner = Convert.ToInt32(rowHMI.HMIID);
+                                    //var MWOHMIData = db.tbllivehmiscreens.Where(m => m.HMIID == hmiidInner).FirstOrDefault();
+                                    var MWOHMIData = obj.GetLiveHMIDetails7(hmiidInner);
+                                    if (MWOHMIData != null) //obviously != 0
+                                    {
+                                        if (MWOHMIData.Date == null) //=> lower OpNo is not submitted.
+                                        {
+                                            IssueMsg = " Start WONo: " + row.WorkOrder + " and PartNo: " + row.MaterialDesc + " and OperationNo: " + localOPNoString;
+                                            //return RedirectToAction("Index");
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            IsInHMI = true;
+                                        }
+                                    }
+                                }
 
-        //                        foreach (var rowHMI in WIPMWOHistorian)
-        //                        {
-        //                            int hmiidInner = Convert.ToInt32(rowHMI.HMIID);
-        //                            //var MWOHMIData = db.tblhmiscreens.Where(m => m.HMIID == hmiidInner).FirstOrDefault();
-        //                            var MWOHMIData = obj.GetLiveHMIDetails7(hmiidInner);
-        //                            if (MWOHMIData != null) //obviously != 0
-        //                            {
-        //                                if (MWOHMIData.Date == null) //=> lower OpNo is not submitted.
-        //                                {
-        //                                    IssueMsg = " Start WONo: " + row.WorkOrder + " and PartNo: " + row.MaterialDesc + " and OperationNo: " + localOPNoString;
-        //                                    //return RedirectToAction("Index");
-        //                                    break;
-        //                                }
-        //                                else
-        //                                {
-        //                                    IsInHMI = true;
-        //                                }
-        //                            }
-        //                        }
-        //                        #endregion
-        //                    }
-        //                }
-        //            }
+                                foreach (var rowHMI in WIPMWOHistorian)
+                                {
+                                    int hmiidInner = Convert.ToInt32(rowHMI.HMIID);
+                                    //var MWOHMIData = db.tblhmiscreens.Where(m => m.HMIID == hmiidInner).FirstOrDefault();
+                                    var MWOHMIData = obj.GetLiveHMIDetails7(hmiidInner);
+                                    if (MWOHMIData != null) //obviously != 0
+                                    {
+                                        if (MWOHMIData.Date == null) //=> lower OpNo is not submitted.
+                                        {
+                                            IssueMsg = " Start WONo: " + row.WorkOrder + " and PartNo: " + row.MaterialDesc + " and OperationNo: " + localOPNoString;
+                                            //return RedirectToAction("Index");
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            IsInHMI = true;
+                                        }
+                                    }
+                                }
+                                #endregion
+                            }
+                        }
+                    }
 
-        //            //commented on 2017-05-29
-        //            /////to Catch those Manual WorkOrders 
-        //            //string WIPQuery1 = @"SELECT * from tblhmiscreen where  HMIID IN ( SELECT Max(HMIID) from tblhmiscreen where  HMIID IN  ( SELECT HMIID from tblhmiscreen where Work_Order_No = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo != '" + opNo + "' and  IsMultiWO = 0 and DDLWokrCentre is null order by HMIID ) group by Work_Order_No,PartNo,OperationNo ) order by OperationNo ;";
-        //            //var WIPDDL1 = db.tblhmiscreens.SqlQuery(WIPQuery1).ToList();
-        //            //foreach (var row in WIPDDL1)
-        //            //{
-        //            //    int InnerOpNo = Convert.ToInt32(row.OperationNo);
-        //            //    if (InnerOpNo < Convert.ToInt32(opNo))
-        //            //    {
-        //            //        string WIPQueryHMI = @"SELECT * from tblhmiscreen where Work_Order_No = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo = '" + InnerOpNo + "' order by HMIID limit 1 ";
-        //            //        var WIP1 = db.tblhmiscreens.SqlQuery(WIPQueryHMI).ToList();
-        //            //        if (WIP1.Count == 0)
-        //            //        {
-        //            //            Session["VError"] = " Select & Start WONo: " + row.Work_Order_No + " and PartNo: " + row.PartNo + " and OperationNo: " + InnerOpNo;
-        //            //            return RedirectToAction("Index");
-        //            //        }
-        //            //        foreach (var rowHMI in WIP1)
-        //            //        {
-        //            //            if (rowHMI.Date == null) //=> lower OpNo is not submitted.
-        //            //            {
-        //            //                Session["VError"] = " Start WONo: " + row.Work_Order_No + " and PartNo: " + row.PartNo + " and OperationNo: " + InnerOpNo;
-        //            //                return RedirectToAction("Index");
-        //            //            }
-        //            //        }
-        //            //    }
-        //            //}
-        //        }
-        //        #endregion
+                    //commented on 2017-05-29
+                    /////to Catch those Manual WorkOrders 
+                    //string WIPQuery1 = @"SELECT * from tblhmiscreen where  HMIID IN ( SELECT Max(HMIID) from tblhmiscreen where  HMIID IN  ( SELECT HMIID from tblhmiscreen where Work_Order_No = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo != '" + opNo + "' and  IsMultiWO = 0 and DDLWokrCentre is null order by HMIID ) group by Work_Order_No,PartNo,OperationNo ) order by OperationNo ;";
+                    //var WIPDDL1 = db.tblhmiscreens.SqlQuery(WIPQuery1).ToList();
+                    //foreach (var row in WIPDDL1)
+                    //{
+                    //    int InnerOpNo = Convert.ToInt32(row.OperationNo);
+                    //    if (InnerOpNo < Convert.ToInt32(opNo))
+                    //    {
+                    //        string WIPQueryHMI = @"SELECT * from tblhmiscreen where Work_Order_No = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo = '" + InnerOpNo + "' order by HMIID limit 1 ";
+                    //        var WIP1 = db.tblhmiscreens.SqlQuery(WIPQueryHMI).ToList();
+                    //        if (WIP1.Count == 0)
+                    //        {
+                    //            Session["VError"] = " Select & Start WONo: " + row.Work_Order_No + " and PartNo: " + row.PartNo + " and OperationNo: " + InnerOpNo;
+                    //            return RedirectToAction("Index");
+                    //        }
+                    //        foreach (var rowHMI in WIP1)
+                    //        {
+                    //            if (rowHMI.Date == null) //=> lower OpNo is not submitted.
+                    //            {
+                    //                Session["VError"] = " Start WONo: " + row.Work_Order_No + " and PartNo: " + row.PartNo + " and OperationNo: " + InnerOpNo;
+                    //                return RedirectToAction("Index");
+                    //            }
+                    //        }
+                    //    }
+                    //}
+                }
+                #endregion
 
-        //        if (!string.IsNullOrEmpty(woNo) && !string.IsNullOrEmpty(opNo) && !string.IsNullOrEmpty(partNo))
-        //        {
-        //            //var InHMIData = db.tbllivehmiscreens.Where(m => m.Work_Order_No == woNo && m.PartNo == partNo && m.OperationNo == opNo && m.Status == 0 && m.HMIID != hmiid && m.MachineID == MachineId).FirstOrDefault();
-        //            var InHMIData = obj.GetLiveHMI1Details(woNo, partNo, opNo, hmiid, MachineId);
-        //            if (InHMIData != null)
-        //            {
-        //                Session["Error"] = "Duplicate WorkOrder:" + woNo + " OpNo: " + opNo + " PartNo:" + partNo;
-        //                //db.tblhmiscreens.Remove(hmiidDataDup);
-        //                //db.Entry(hmiidDataDup).State = System.Data.Entity.EntityState.Deleted;
-        //                //db.SaveChanges();
-        //                obj.DeleteHMIScreenDetails(hmiidDataDup.HMIID);
-        //                return RedirectToAction("Index");
-        //            }
-        //        }
-        //    }
+                if (!string.IsNullOrEmpty(woNo) && !string.IsNullOrEmpty(opNo) && !string.IsNullOrEmpty(partNo))
+                {
+                    //var InHMIData = db.tbllivehmiscreens.Where(m => m.Work_Order_No == woNo && m.PartNo == partNo && m.OperationNo == opNo && m.Status == 0 && m.HMIID != hmiid && m.MachineID == MachineId).FirstOrDefault();
+                    var InHMIData = obj.GetLiveHMI1Details(woNo, partNo, opNo, hmiid, MachineId);
+                    if (InHMIData != null)
+                    {
+                        Session["Error"] = "Duplicate WorkOrder:" + woNo + " OpNo: " + opNo + " PartNo:" + partNo;
+                        //db.tblhmiscreens.Remove(hmiidDataDup);
+                        //db.Entry(hmiidDataDup).State = System.Data.Entity.EntityState.Deleted;
+                        //db.SaveChanges();
+                        obj.DeleteHMIScreenDetails(hmiidDataDup.HMIID);
+                        return RedirectToAction("Index");
+                    }
+                }
+               
+            }
 
-        //    //tbllivehmiscreen hmiidData = db.tbllivehmiscreens.Where(m => m.HMIID == HMIID).FirstOrDefault();
-        //    tbllivehmiscreen hmiidData = obj.GetLiveHMIDetails6(HMIID);
-        //    if (hmiidData.IsHold == 0)
-        //    {
-        //        if (hmiidData.Date == null)
-        //        {
-        //            if (hmiidData.OperatorDet != null && hmiidData.Shift != null && hmiidData.Project != null && hmiidData.Prod_FAI != null && hmiidData.PartNo != null && hmiidData.Work_Order_No != null && hmiidData.OperationNo != null && hmiidData.Target_Qty.HasValue)
-        //            {
-        //                hmiidData.Date = DateTime.Now;
+            //tbllivehmiscreen hmiidData = db.tbllivehmiscreens.Where(m => m.HMIID == HMIID).FirstOrDefault();
+            tbllivehmiscreen hmiidData = obj.GetLiveHMIDetails6(HMIID);
+            if (hmiidData.IsHold == 0)
+            {
+                if (hmiidData.Date == null)
+                {
+                    if (hmiidData.OperatorDet != null && hmiidData.Shift != null && hmiidData.Project != null && hmiidData.Prod_FAI != null && hmiidData.PartNo != null && hmiidData.Work_Order_No != null && hmiidData.OperationNo != null && hmiidData.Target_Qty.HasValue)
+                    {
+                        hmiidData.Date = DateTime.Now;
 
-        //                //Get Processed Qty
-        //                int newProcessedQty = 0;
-        //                int PrvProcessQty = 0, PrvDeliveredQty = 0;
-        //                string woNo = Convert.ToString(hmiidData.Work_Order_No);
-        //                string opNo = Convert.ToString(hmiidData.OperationNo);
-        //                string partNo = Convert.ToString(hmiidData.PartNo);
-        //                int deliveredQty = 0;
-        //                int TargetQtyNew = Convert.ToInt32(hmiidData.Target_Qty);
-        //                int DeliveredQty = Convert.ToInt32(hmiidData.Delivered_Qty);
-        //                int ProcessedQty = Convert.ToInt32(hmiidData.ProcessQty);
-        //                newProcessedQty = DeliveredQty + ProcessedQty;
+                        //Get Processed Qty
+                        int newProcessedQty = 0;
+                        int PrvProcessQty = 0, PrvDeliveredQty = 0;
+                        string woNo = Convert.ToString(hmiidData.Work_Order_No);
+                        string opNo = Convert.ToString(hmiidData.OperationNo);
+                        string partNo = Convert.ToString(hmiidData.PartNo);
+                        int deliveredQty = 0;
+                        int TargetQtyNew = Convert.ToInt32(hmiidData.Target_Qty);
+                        int DeliveredQty = Convert.ToInt32(hmiidData.Delivered_Qty);
+                        int ProcessedQty = Convert.ToInt32(hmiidData.ProcessQty);
+                        newProcessedQty = DeliveredQty + ProcessedQty;
 
-        //                if (Convert.ToInt32(hmiidData.isWorkInProgress) == 1)
-        //                {
-        //                    Session["Error"] = "Job is Finished for WorkOrder:" + woNo + " OpNo: " + opNo + " PartNo:" + partNo;
-        //                    //db.tbllivehmiscreens.Remove(hmiidData);
-        //                    //db.SaveChanges();
-        //                    obj.DeleteHMIScreenDetails(hmiidData.HMIID);
-        //                    return RedirectToAction("Index");
-        //                }
+                        if (Convert.ToInt32(hmiidData.isWorkInProgress) == 1)
+                        {
+                            Session["Error"] = "Job is Finished for WorkOrder:" + woNo + " OpNo: " + opNo + " PartNo:" + partNo;
+                            //db.tbllivehmiscreens.Remove(hmiidData);
+                            //db.SaveChanges();
+                            obj.DeleteHMIScreenDetails(hmiidData.HMIID);
+                            return RedirectToAction("Index");
+                        }
 
-        //                if (TargetQtyNew == newProcessedQty)
-        //                {
-        //                    hmiidData.Target_Qty = newProcessedQty;
-        //                    hmiidData.ProcessQty = newProcessedQty;
-        //                    hmiidData.SplitWO = "No";
-        //                    hmiidData.isWorkInProgress = 1;
-        //                    hmiidData.Status = 2;
-        //                    hmiidData.Time = hmiidData.Date;
-        //                    hmiidData.Delivered_Qty = 0;
+                        if (TargetQtyNew == newProcessedQty)
+                        {
+                            hmiidData.Target_Qty = newProcessedQty;
+                            hmiidData.ProcessQty = newProcessedQty;
+                            hmiidData.SplitWO = "No";
+                            hmiidData.isWorkInProgress = 1;
+                            hmiidData.Status = 2;
+                            hmiidData.Time = hmiidData.Date;
+                            hmiidData.Delivered_Qty = 0;
 
-        //                    //db.Entry(hmiidData).State = System.Data.Entity.EntityState.Modified;
-        //                    //db.SaveChanges();
+                            //db.Entry(hmiidData).State = System.Data.Entity.EntityState.Modified;
+                            //db.SaveChanges();
 
-        //                    obj.UpdateLivHMIDets(hmiidData.HMIID, Convert.ToInt32(hmiidData.Target_Qty), hmiidData.ProcessQty, hmiidData.SplitWO, hmiidData.isWorkInProgress, Convert.ToInt32(hmiidData.Status), Convert.ToDateTime(hmiidData.Time), Convert.ToInt32(hmiidData.Delivered_Qty));
+                            //obj.UpdateLivHMIDets(hmiidData.HMIID, Convert.ToInt32(hmiidData.Target_Qty), hmiidData.ProcessQty, hmiidData.SplitWO, hmiidData.isWorkInProgress, Convert.ToInt32(hmiidData.Status), Convert.ToDateTime(hmiidData.Time), Convert.ToInt32(hmiidData.Delivered_Qty));
 
-        //                    //if it existing in DDLList Update 
-        //                    //var DDLList = db.tblddls.Where(m => m.WorkOrder == hmiidData.Work_Order_No && m.MaterialDesc == hmiidData.PartNo && m.OperationNo == hmiidData.OperationNo && m.IsCompleted == 0).ToList();
-        //                    var DDLList = obj.GetddlDets(hmiidData.Work_Order_No, hmiidData.PartNo, hmiidData.OperationNo);
-        //                    foreach (var row in DDLList)
-        //                    {
-        //                        //row.IsCompleted = 1;
-        //                        //db.Entry(row).State = System.Data.Entity.EntityState.Modified;
-        //                        //db.SaveChanges();
-        //                        obj.UpdateddlDetails(row.DDLID);
-        //                    }
+                            //if it existing in DDLList Update 
+                            //var DDLList = db.tblddls.Where(m => m.WorkOrder == hmiidData.Work_Order_No && m.MaterialDesc == hmiidData.PartNo && m.OperationNo == hmiidData.OperationNo && m.IsCompleted == 0).ToList();
+                            var DDLList = obj.GetddlDets(hmiidData.Work_Order_No, hmiidData.PartNo, hmiidData.OperationNo);
+                            foreach (var row in DDLList)
+                            {
+                                //row.IsCompleted = 1;
+                                //db.Entry(row).State = System.Data.Entity.EntityState.Modified;
+                                //db.SaveChanges();
+                                //obj.UpdateddlDetails(row.DDLID);
+                            }
 
-        //                    Session["Error"] = "Job is Finished for WorkOrder:" + woNo + " OpNo: " + opNo + " PartNo:" + partNo;
-        //                    return RedirectToAction("Index");
+                            Session["Error"] = "Job is Finished for WorkOrder:" + woNo + " OpNo: " + opNo + " PartNo:" + partNo;
+                            return RedirectToAction("Index");
 
-        //                }
+                        }
 
-        //                //2017-06-03
-        //                //var getProcessQty = db.tblhmiscreens.Where(m => m.Work_Order_No == woNo && m.PartNo == partNo && m.OperationNo == opNo).OrderByDescending(m => m.HMIID).Take(2).ToList();
-        //                //if (getProcessQty.Count == 2)
-        //                //{
-        //                //    string delivString = Convert.ToString(getProcessQty[1].Delivered_Qty);
-        //                //    int.TryParse(delivString, out PrvDeliveredQty);
+                        //2017-06-03
+                        //var getProcessQty = db.tblhmiscreens.Where(m => m.Work_Order_No == woNo && m.PartNo == partNo && m.OperationNo == opNo).OrderByDescending(m => m.HMIID).Take(2).ToList();
+                        //if (getProcessQty.Count == 2)
+                        //{
+                        //    string delivString = Convert.ToString(getProcessQty[1].Delivered_Qty);
+                        //    int.TryParse(delivString, out PrvDeliveredQty);
 
-        //                //    string processString = Convert.ToString(getProcessQty[1].ProcessQty);
-        //                //    int.TryParse(processString, out PrvProcessQty);
+                        //    string processString = Convert.ToString(getProcessQty[1].ProcessQty);
+                        //    int.TryParse(processString, out PrvProcessQty);
 
-        //                //    newProcessedQty = PrvProcessQty + PrvDeliveredQty;
-        //                //    if (Convert.ToInt32(getProcessQty[1].isWorkInProgress) == 1 || TargetQtyNew == newProcessedQty)
-        //                //    {
-        //                //        Session["Error"] = "Job is Finished for WorkOrder:" + woNo + " OpNo: " + opNo + " PartNo:" + partNo;
+                        //    newProcessedQty = PrvProcessQty + PrvDeliveredQty;
+                        //    if (Convert.ToInt32(getProcessQty[1].isWorkInProgress) == 1 || TargetQtyNew == newProcessedQty)
+                        //    {
+                        //        Session["Error"] = "Job is Finished for WorkOrder:" + woNo + " OpNo: " + opNo + " PartNo:" + partNo;
 
-        //                //        //2017-01-07
-        //                //        //hmiidData.Prod_FAI = null;
-        //                //        //hmiidData.Target_Qty = null;
-        //                //        //hmiidData.OperationNo = null;
-        //                //        //hmiidData.PartNo = null;
-        //                //        //hmiidData.Work_Order_No = null;
-        //                //        //hmiidData.Project = null;
-        //                //        //hmiidData.Date = null;
-        //                //        //hmiidData.DDLWokrCentre = null;
-        //                //        //hmiidData.isWorkOrder = 0;
-        //                //        //hmiidData.ProcessQty = 0;
-        //                //        //Session["FromDDL"] = 2;
-        //                //        //TempData["ForDDL2"] = 2;
+                        //        //2017-01-07
+                        //        //hmiidData.Prod_FAI = null;
+                        //        //hmiidData.Target_Qty = null;
+                        //        //hmiidData.OperationNo = null;
+                        //        //hmiidData.PartNo = null;
+                        //        //hmiidData.Work_Order_No = null;
+                        //        //hmiidData.Project = null;
+                        //        //hmiidData.Date = null;
+                        //        //hmiidData.DDLWokrCentre = null;
+                        //        //hmiidData.isWorkOrder = 0;
+                        //        //hmiidData.ProcessQty = 0;
+                        //        //Session["FromDDL"] = 2;
+                        //        //TempData["ForDDL2"] = 2;
 
-        //                //        //db.Entry(hmiidData).State = System.Data.Entity.EntityState.Modified;
-        //                //        //db.SaveChanges();
+                        //        //db.Entry(hmiidData).State = System.Data.Entity.EntityState.Modified;
+                        //        //db.SaveChanges();
 
-        //                //        db.tblhmiscreens.Remove(hmiidData);
-        //                //        db.SaveChanges();
-        //                //        return RedirectToAction("Index");
-        //                //    }
-        //                //}
+                        //        db.tblhmiscreens.Remove(hmiidData);
+                        //        db.SaveChanges();
+                        //        return RedirectToAction("Index");
+                        //    }
+                        //}
 
-        //                if (TargetQtyNew < newProcessedQty)
-        //                {
-        //                    Session["Error"] = "Previous ProcessedQty :" + newProcessedQty + ". TargetQty Cannot be Less than Processed";
-        //                    hmiidData.ProcessQty = 0;
-        //                    hmiidData.Date = null;
-        //                    Session["FromDDL"] = 2;
-        //                    TempData["ForDDL2"] = 2;
-        //                    //db.Entry(hmiidData).State = System.Data.Entity.EntityState.Modified;
-        //                    //db.SaveChanges();
-        //                    obj.UpdateLivHMI1Dets(hmiidData.HMIID, hmiidData.ProcessQty, Convert.ToDateTime(hmiidData.Date));
-        //                    return RedirectToAction("Index");
-        //                }
+                        if (TargetQtyNew < newProcessedQty)
+                        {
+                            Session["Error"] = "Previous ProcessedQty :" + newProcessedQty + ". TargetQty Cannot be Less than Processed";
+                            hmiidData.ProcessQty = 0;
+                            hmiidData.Date = null;
+                            Session["FromDDL"] = 2;
+                            TempData["ForDDL2"] = 2;
+                            //db.Entry(hmiidData).State = System.Data.Entity.EntityState.Modified;
+                            //db.SaveChanges();
+                           // obj.UpdateLivHMI1Dets(hmiidData.HMIID, hmiidData.ProcessQty, Convert.ToDateTime(hmiidData.Date));
+                            return RedirectToAction("Index");
+                        }
 
-        //                //hmiidData.ProcessQty = Convert.ToInt32(PrvProcessQty + PrvDeliveredQty);
+                        //hmiidData.ProcessQty = Convert.ToInt32(PrvProcessQty + PrvDeliveredQty);
 
 
-        //                #region 2017-02-07
-        //                //Check if Lower Operation No is submitted or JF  or PF 'ed Prior to this.
-        //                //1) Get Related WO's , order by Ascending.
-        //                //2) Check if current Opno is Allowed to be Submitted. 
-        //                //(CONDITION : All Opno's lesser than this has to be submitted ( => || PF or JF 'ed Atleast Once).)
+                        #region 2017-02-07
+                        //Check if Lower Operation No is submitted or JF  or PF 'ed Prior to this.
+                        //1) Get Related WO's , order by Ascending.
+                        //2) Check if current Opno is Allowed to be Submitted. 
+                        //(CONDITION : All Opno's lesser than this has to be submitted ( => || PF or JF 'ed Atleast Once).)
 
-        //                int OperationNoInt = Convert.ToInt32(opNo);
-        //                //var hmiDataInAscendingOrder = db.tblhmiscreens.Where(m => m.Work_Order_No == woNo && m.PartNo == partNo && m.OperationNo != opNo && m.OperationNo.toInt < opNo)).OrderBy(m => m.OperationNo).ToList(); //&& m.OperationNo < opNo "< Cannot be applied to Strings"
-        //                //string WIPQuery = @"SELECT * from tbllivehmiscreen where Work_Order_No = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo != '" + opNo + "' and MachineID = '" + MachineId + "' order by HMIID   ";
-        //                //var WIP = db.tbllivehmiscreens.SqlQuery(WIPQuery).ToList();
-        //                var WIP = obj.GetLiveHMIDetailsList(woNo, partNo, opNo, MachineId);
-        //                //string WIPQueryHistorian = @"SELECT * from tblhmiscreen where Work_Order_No = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo != '" + opNo + "' and MachineID = '" + MachineId + "' order by HMIID   ";
-        //                //var WIPHistorian = db.tblhmiscreens.SqlQuery(WIPQueryHistorian).ToList();
-        //                var WIPHistorian = obj.GetHisHMIDetailsList(woNo, partNo, opNo, MachineId);
-        //                foreach (var row in WIP)
-        //                {
-        //                    int InnerOpNo = Convert.ToInt32(row.OperationNo);
-        //                    if (OperationNoInt > InnerOpNo)
-        //                    {
-        //                        if (row.Date == null) //=> lower OpNo is not submitted.
-        //                        {
-        //                            Session["VError"] = " Submit WONo: " + row.Work_Order_No + " and PartNo: " + row.PartNo + " and OperationNo: " + InnerOpNo;
-        //                            return RedirectToAction("Index");
-        //                        }
-        //                    }
-        //                }
-        //                foreach (var row in WIPHistorian)
-        //                {
-        //                    int InnerOpNo = Convert.ToInt32(row.OperationNo);
-        //                    if (OperationNoInt > InnerOpNo)
-        //                    {
-        //                        if (row.Date == null) //=> lower OpNo is not submitted.
-        //                        {
-        //                            Session["VError"] = " Submit WONo: " + row.Work_Order_No + " and PartNo: " + row.PartNo + " and OperationNo: " + InnerOpNo;
-        //                            return RedirectToAction("Index");
-        //                        }
-        //                    }
-        //                }
-        //                bool IsInHMI = true;
-        //                //string WIPQuery2 = @"SELECT * from tblddl where WorkOrder = '" + woNo + "' and MaterialDesc = '" + partNo + "' and OperationNo != '" + opNo + "'  and IsCompleted = 0 order by WorkOrder,MaterialDesc,OperationNo ";
-        //                //var WIPDDL = db.tblddls.SqlQuery(WIPQuery2).ToList();
-        //                var WIPDDL = obj.GetddlDetails(woNo, partNo, opNo);
-        //                foreach (var row in WIPDDL)
-        //                {
-        //                    Session["VError"] = null;
-        //                    IsInHMI = true; //reinitialize
-        //                    int InnerOpNo = Convert.ToInt32(row.OperationNo);
-        //                    if (InnerOpNo < OperationNoInt)
-        //                    {
-        //                        bool IsItWrong = false;
-        //                        //string WIPQueryHMI = @"SELECT * from tbllivehmiscreen where Work_Order_No = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo = '" + InnerOpNo + "' order by HMIID limit 1 ";
-        //                        //var WIP1 = db.tbllivehmiscreens.SqlQuery(WIPQueryHMI).ToList();
-        //                        var WIP1 = obj.GetLive1HMIScreenDetails(woNo, partNo, Convert.ToString(InnerOpNo));
-        //                        //string WIPQueryHMIHistorian = @"SELECT * from tblhmiscreen where Work_Order_No = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo = '" + InnerOpNo + "' order by HMIID limit 1 ";
-        //                        //var WIP1Historian = db.tblhmiscreens.SqlQuery(WIPQueryHMIHistorian).ToList();
-        //                        var WIP1Historian = obj.GetLive1HScreenDetails(woNo, partNo, Convert.ToString(InnerOpNo));
-        //                        if (WIP1.Count == 0 || WIP1Historian.Count == 0)
-        //                        {
-        //                            //Session["VError"] = " Select & Start WONo: " + row.WorkOrder + " and PartNo: " + row.MaterialDesc + " and OperationNo: " + InnerOpNo;
-        //                            IsItWrong = true;
-        //                            IsInHMI = false;
-        //                        }
-        //                        else
-        //                        {
-        //                            foreach (var rowHMI in WIP1)
-        //                            {
-        //                                if (rowHMI.Date == null) //=> lower OpNo is not submitted.
-        //                                {
-        //                                    Session["VError"] = " Start WONo: " + row.WorkOrder + " and PartNo: " + row.MaterialDesc + " and OperationNo: " + InnerOpNo;
-        //                                    return RedirectToAction("Index");
-        //                                }
-        //                            }
-        //                            if (WIP1Historian != null)
-        //                            {
-        //                                foreach (var rowHMI in WIP1Historian)
-        //                                {
-        //                                    if (rowHMI.Date == null) //=> lower OpNo is not submitted.
-        //                                    {
-        //                                        Session["VError"] = " Start WONo: " + row.WorkOrder + " and PartNo: " + row.MaterialDesc + " and OperationNo: " + InnerOpNo;
-        //                                        return RedirectToAction("Index");
-        //                                    }
-        //                                }
-        //                            }
-        //                        }
+                        int OperationNoInt = Convert.ToInt32(opNo);
+                        //var hmiDataInAscendingOrder = db.tblhmiscreens.Where(m => m.Work_Order_No == woNo && m.PartNo == partNo && m.OperationNo != opNo && m.OperationNo.toInt < opNo)).OrderBy(m => m.OperationNo).ToList(); //&& m.OperationNo < opNo "< Cannot be applied to Strings"
+                        //string WIPQuery = @"SELECT * from tbllivehmiscreen where Work_Order_No = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo != '" + opNo + "' and MachineID = '" + MachineId + "' order by HMIID   ";
+                        //var WIP = db.tbllivehmiscreens.SqlQuery(WIPQuery).ToList();
+                        var WIP = obj.GetLiveHMIDetailsList(woNo, partNo, opNo, MachineId);
+                        //string WIPQueryHistorian = @"SELECT * from tblhmiscreen where Work_Order_No = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo != '" + opNo + "' and MachineID = '" + MachineId + "' order by HMIID   ";
+                        //var WIPHistorian = db.tblhmiscreens.SqlQuery(WIPQueryHistorian).ToList();
+                        var WIPHistorian = obj.GetHisHMIDetailsList(woNo, partNo, opNo, MachineId);
+                        foreach (var row in WIP)
+                        {
+                            int InnerOpNo = Convert.ToInt32(row.OperationNo);
+                            if (OperationNoInt > InnerOpNo)
+                            {
+                                if (row.Date == null) //=> lower OpNo is not submitted.
+                                {
+                                    Session["VError"] = " Submit WONo: " + row.Work_Order_No + " and PartNo: " + row.PartNo + " and OperationNo: " + InnerOpNo;
+                                    return RedirectToAction("Index");
+                                }
+                            }
+                        }
+                        foreach (var row in WIPHistorian)
+                        {
+                            int InnerOpNo = Convert.ToInt32(row.OperationNo);
+                            if (OperationNoInt > InnerOpNo)
+                            {
+                                if (row.Date == null) //=> lower OpNo is not submitted.
+                                {
+                                    Session["VError"] = " Submit WONo: " + row.Work_Order_No + " and PartNo: " + row.PartNo + " and OperationNo: " + InnerOpNo;
+                                    return RedirectToAction("Index");
+                                }
+                            }
+                        }
+                        bool IsInHMI = true;
+                        //string WIPQuery2 = @"SELECT * from tblddl where WorkOrder = '" + woNo + "' and MaterialDesc = '" + partNo + "' and OperationNo != '" + opNo + "'  and IsCompleted = 0 order by WorkOrder,MaterialDesc,OperationNo ";
+                        //var WIPDDL = db.tblddls.SqlQuery(WIPQuery2).ToList();
+                        var WIPDDL = obj.GetddlDetails(woNo, partNo, opNo);
+                        foreach (var row in WIPDDL)
+                        {
+                            Session["VError"] = null;
+                            IsInHMI = true; //reinitialize
+                            int InnerOpNo = Convert.ToInt32(row.OperationNo);
+                            if (InnerOpNo < OperationNoInt)
+                            {
+                                bool IsItWrong = false;
+                                //string WIPQueryHMI = @"SELECT * from tbllivehmiscreen where Work_Order_No = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo = '" + InnerOpNo + "' order by HMIID limit 1 ";
+                                //var WIP1 = db.tbllivehmiscreens.SqlQuery(WIPQueryHMI).ToList();
+                                var WIP1 = obj.GetLive1HMIScreenDetails(woNo, partNo, Convert.ToString(InnerOpNo));
+                                //string WIPQueryHMIHistorian = @"SELECT * from tblhmiscreen where Work_Order_No = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo = '" + InnerOpNo + "' order by HMIID limit 1 ";
+                                //var WIP1Historian = db.tblhmiscreens.SqlQuery(WIPQueryHMIHistorian).ToList();
+                                var WIP1Historian = obj.GetLive1HScreenDetails(woNo, partNo, Convert.ToString(InnerOpNo));
+                                if (WIP1.Count == 0 || WIP1Historian.Count == 0)
+                                {
+                                    //Session["VError"] = " Select & Start WONo: " + row.WorkOrder + " and PartNo: " + row.MaterialDesc + " and OperationNo: " + InnerOpNo;
+                                    IsItWrong = true;
+                                    IsInHMI = false;
+                                }
+                                else
+                                {
+                                    foreach (var rowHMI in WIP1)
+                                    {
+                                        if (rowHMI.Date == null) //=> lower OpNo is not submitted.
+                                        {
+                                            Session["VError"] = " Start WONo: " + row.WorkOrder + " and PartNo: " + row.MaterialDesc + " and OperationNo: " + InnerOpNo;
+                                            return RedirectToAction("Index");
+                                        }
+                                    }
+                                    if (WIP1Historian != null)
+                                    {
+                                        foreach (var rowHMI in WIP1Historian)
+                                        {
+                                            if (rowHMI.Date == null) //=> lower OpNo is not submitted.
+                                            {
+                                                Session["VError"] = " Start WONo: " + row.WorkOrder + " and PartNo: " + row.MaterialDesc + " and OperationNo: " + InnerOpNo;
+                                                return RedirectToAction("Index");
+                                            }
+                                        }
+                                    }
+                                }
 
-        //                        if (!IsInHMI)
-        //                        {
-        //                            #region //also check in MultiWO table
-        //                            //string WIPQueryMultiWO = @"SELECT * from tbllivemultiwoselection where WorkOrder = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo = '" + InnerOpNo + "' order by MultiWOID limit 1 ";
-        //                            //var WIPMWO = db.tbllivemultiwoselections.SqlQuery(WIPQueryMultiWO).ToList();
-        //                            var WIPMWO = obj.GetMultiWOtDetails(woNo, partNo, Convert.ToString(InnerOpNo));
-        //                            //string WIPQueryMultiWOHistroian = @"SELECT * from tbl_multiwoselection where WorkOrder = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo = '" + InnerOpNo + "' order by MultiWOID limit 1 ";
-        //                            //var WIPMWOHistorian = db.tbl_multiwoselection.SqlQuery(WIPQueryMultiWOHistroian).ToList();
-        //                            var WIPMWOHistorian = obj.GetMultiWorkSelectionDetails(woNo, partNo, Convert.ToString(InnerOpNo));
-        //                            if (WIPMWO.Count == 0 || WIPMWOHistorian.Count == 0)
-        //                            {
-        //                                Session["VError"] = " Select  WONo: " + row.WorkOrder + " and PartNo: " + row.MaterialDesc + " and OperationNo: " + InnerOpNo;
-        //                                return RedirectToAction("Index");
-        //                                //IsInHMI = false;
-        //                                break;
-        //                            }
+                                if (!IsInHMI)
+                                {
+                                    #region //also check in MultiWO table
+                                    //string WIPQueryMultiWO = @"SELECT * from tbllivemultiwoselection where WorkOrder = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo = '" + InnerOpNo + "' order by MultiWOID limit 1 ";
+                                    //var WIPMWO = db.tbllivemultiwoselections.SqlQuery(WIPQueryMultiWO).ToList();
+                                    var WIPMWO = obj.GetMultiWOtDetails(woNo, partNo, Convert.ToString(InnerOpNo));
+                                    //string WIPQueryMultiWOHistroian = @"SELECT * from tbl_multiwoselection where WorkOrder = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo = '" + InnerOpNo + "' order by MultiWOID limit 1 ";
+                                    //var WIPMWOHistorian = db.tbl_multiwoselection.SqlQuery(WIPQueryMultiWOHistroian).ToList();
+                                    var WIPMWOHistorian = obj.GetMultiWorkSelectionDetails(woNo, partNo, Convert.ToString(InnerOpNo));
+                                    if (WIPMWO.Count == 0 || WIPMWOHistorian.Count == 0)
+                                    {
+                                        Session["VError"] = " Select  WONo: " + row.WorkOrder + " and PartNo: " + row.MaterialDesc + " and OperationNo: " + InnerOpNo;
+                                        return RedirectToAction("Index");
+                                        //IsInHMI = false;
+                                        break;
+                                    }
 
-        //                            foreach (var rowHMI in WIPMWO)
-        //                            {
-        //                                int hmiid = Convert.ToInt32(rowHMI.HMIID);
-        //                                //var MWOHMIData = db.tbllivehmiscreens.Where(m => m.HMIID == hmiid).FirstOrDefault();
-        //                                var MWOHMIData = obj.GetLiveHMIDetails7(hmiid);
-        //                                if (MWOHMIData != null) //obviously != 0
-        //                                {
-        //                                    if (MWOHMIData.Date == null) //=> lower OpNo is not submitted.
-        //                                    {
-        //                                        Session["VError"] = " Start WONo: " + row.WorkOrder + " and PartNo: " + row.MaterialDesc + " and OperationNo: " + InnerOpNo;
-        //                                        return RedirectToAction("Index");
-        //                                        //break;
-        //                                    }
-        //                                    else
-        //                                    {
-        //                                        IsInHMI = true;
-        //                                    }
-        //                                }
-        //                            }
+                                    foreach (var rowHMI in WIPMWO)
+                                    {
+                                        int hmiid = Convert.ToInt32(rowHMI.HMIID);
+                                        //var MWOHMIData = db.tbllivehmiscreens.Where(m => m.HMIID == hmiid).FirstOrDefault();
+                                        var MWOHMIData = obj.GetLiveHMIDetails7(hmiid);
+                                        if (MWOHMIData != null) //obviously != 0
+                                        {
+                                            if (MWOHMIData.Date == null) //=> lower OpNo is not submitted.
+                                            {
+                                                Session["VError"] = " Start WONo: " + row.WorkOrder + " and PartNo: " + row.MaterialDesc + " and OperationNo: " + InnerOpNo;
+                                                return RedirectToAction("Index");
+                                                //break;
+                                            }
+                                            else
+                                            {
+                                                IsInHMI = true;
+                                            }
+                                        }
+                                    }
 
-        //                            foreach (var rowHMI in WIPMWOHistorian)
-        //                            {
-        //                                int hmiid = Convert.ToInt32(rowHMI.HMIID);
-        //                                //var MWOHMIData = db.tblhmiscreens.Where(m => m.HMIID == hmiid).FirstOrDefault();
-        //                                var MWOHMIData = obj.GetLiveHMIDetails7(hmiid);
-        //                                if (MWOHMIData != null) //obviously != 0
-        //                                {
-        //                                    if (MWOHMIData.Date == null) //=> lower OpNo is not submitted.
-        //                                    {
-        //                                        Session["VError"] = " Start WONo: " + row.WorkOrder + " and PartNo: " + row.MaterialDesc + " and OperationNo: " + InnerOpNo;
-        //                                        return RedirectToAction("Index");
-        //                                        //break;
-        //                                    }
-        //                                    else
-        //                                    {
-        //                                        IsInHMI = true;
-        //                                    }
-        //                                }
-        //                            }
-        //                            #endregion
-        //                        }
+                                    foreach (var rowHMI in WIPMWOHistorian)
+                                    {
+                                        int hmiid = Convert.ToInt32(rowHMI.HMIID);
+                                        //var MWOHMIData = db.tblhmiscreens.Where(m => m.HMIID == hmiid).FirstOrDefault();
+                                        var MWOHMIData = obj.GetLiveHMIDetails7(hmiid);
+                                        if (MWOHMIData != null) //obviously != 0
+                                        {
+                                            if (MWOHMIData.Date == null) //=> lower OpNo is not submitted.
+                                            {
+                                                Session["VError"] = " Start WONo: " + row.WorkOrder + " and PartNo: " + row.MaterialDesc + " and OperationNo: " + InnerOpNo;
+                                                return RedirectToAction("Index");
+                                                //break;
+                                            }
+                                            else
+                                            {
+                                                IsInHMI = true;
+                                            }
+                                        }
+                                    }
+                                    #endregion
+                                }
 
-        //                    }
-        //                }
+                            }
+                        }
 
-        //                //commmented On 2017-05-29
-        //                ////2017-01-21 I guess when its purely ManualEntry
-        //                ////string WIPQuery1 = @"SELECT * from tblhmiscreen where Work_Order_No = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo != '" + opNo + "' order by Work_Order_No,PartNo,OperationNo";
-        //                //string WIPQuery1 = @"SELECT * from tblhmiscreen where  HMIID IN ( SELECT Max(HMIID) from tblhmiscreen where  HMIID IN  ( SELECT HMIID from tblhmiscreen where Work_Order_No = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo != '" + opNo + "' and IsMultiWO = 0 and DDLWokrCentre is null order by HMIID ) group by Work_Order_No,PartNo,OperationNo  ) order by OperationNo;";
-        //                //var WIPDDL1 = db.tblhmiscreens.SqlQuery(WIPQuery1).ToList();
-        //                //foreach (var row in WIPDDL1)
-        //                //{
-        //                //    int InnerOpNo = Convert.ToInt32(row.OperationNo);
-        //                //    if (InnerOpNo < OperationNoInt)
-        //                //    {
-        //                //        string WIPQueryHMI = @"SELECT * from tblhmiscreen where Work_Order_No = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo = '" + InnerOpNo + "' order by HMIID limit 1 ";
-        //                //        var WIP2 = db.tblhmiscreens.SqlQuery(WIPQueryHMI).ToList();
-        //                //        foreach (var rowHMI in WIP2)
-        //                //        {
-        //                //            if (rowHMI.Date == null) //=> lower OpNo is not submitted.
-        //                //            {
-        //                //                Session["VError"] = " Start WONo: " + row.Work_Order_No + " and PartNo: " + row.PartNo + " and OperationNo: " + InnerOpNo;
-        //                //                return RedirectToAction("Index");
-        //                //            }
-        //                //        }
-        //                //        if (WIP2.Count == 0)
-        //                //        {
-        //                //            Session["VError"] = " Select & Start WONo: " + row.Work_Order_No + " and PartNo: " + row.PartNo + " and OperationNo: " + InnerOpNo;
-        //                //            return RedirectToAction("Index");
-        //                //        }
-        //                //    }
-        //                //}
+                        //commmented On 2017-05-29
+                        ////2017-01-21 I guess when its purely ManualEntry
+                        ////string WIPQuery1 = @"SELECT * from tblhmiscreen where Work_Order_No = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo != '" + opNo + "' order by Work_Order_No,PartNo,OperationNo";
+                        //string WIPQuery1 = @"SELECT * from tblhmiscreen where  HMIID IN ( SELECT Max(HMIID) from tblhmiscreen where  HMIID IN  ( SELECT HMIID from tblhmiscreen where Work_Order_No = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo != '" + opNo + "' and IsMultiWO = 0 and DDLWokrCentre is null order by HMIID ) group by Work_Order_No,PartNo,OperationNo  ) order by OperationNo;";
+                        //var WIPDDL1 = db.tblhmiscreens.SqlQuery(WIPQuery1).ToList();
+                        //foreach (var row in WIPDDL1)
+                        //{
+                        //    int InnerOpNo = Convert.ToInt32(row.OperationNo);
+                        //    if (InnerOpNo < OperationNoInt)
+                        //    {
+                        //        string WIPQueryHMI = @"SELECT * from tblhmiscreen where Work_Order_No = '" + woNo + "' and PartNo = '" + partNo + "' and OperationNo = '" + InnerOpNo + "' order by HMIID limit 1 ";
+                        //        var WIP2 = db.tblhmiscreens.SqlQuery(WIPQueryHMI).ToList();
+                        //        foreach (var rowHMI in WIP2)
+                        //        {
+                        //            if (rowHMI.Date == null) //=> lower OpNo is not submitted.
+                        //            {
+                        //                Session["VError"] = " Start WONo: " + row.Work_Order_No + " and PartNo: " + row.PartNo + " and OperationNo: " + InnerOpNo;
+                        //                return RedirectToAction("Index");
+                        //            }
+                        //        }
+                        //        if (WIP2.Count == 0)
+                        //        {
+                        //            Session["VError"] = " Select & Start WONo: " + row.Work_Order_No + " and PartNo: " + row.PartNo + " and OperationNo: " + InnerOpNo;
+                        //            return RedirectToAction("Index");
+                        //        }
+                        //    }
+                        //}
 
-        //                #endregion
+                        #endregion
 
-        //                int ReworkOrder = 0;
-        //                string ReworkOrderString = Convert.ToString(Session["isWorkOrder"]);
-        //                if (int.TryParse(ReworkOrderString, out ReworkOrder))
-        //                {
-        //                    if (ReworkOrderString == "1")
-        //                    {
-        //                        hmiidData.isWorkOrder = 1;
-        //                    }
-        //                    else
-        //                    {
-        //                        hmiidData.isWorkOrder = 0;
-        //                    }
-        //                }
+                        int ReworkOrder = 0;
+                        string ReworkOrderString = Convert.ToString(Session["isWorkOrder"]);
+                        if (int.TryParse(ReworkOrderString, out ReworkOrder))
+                        {
+                            if (ReworkOrderString == "1")
+                            {
+                                hmiidData.isWorkOrder = 1;
+                            }
+                            else
+                            {
+                                hmiidData.isWorkOrder = 0;
+                            }
+                        }
 
-        //                Session["WorkOrderClicked"] = 0;
-        //                hmiidData.Status = 0;
-        //                obj.UpdateLiv2HMIDetails(hmiidData.HMIID, Convert.ToDateTime(hmiidData.Date), Convert.ToInt32(hmiidData.Status), hmiidData.isWorkOrder);
-        //                //db.Entry(hmiidData).State = System.Data.Entity.EntityState.Modified;
-        //                //db.SaveChanges();
-        //            }
-        //            else
-        //            {
-        //                Session["VError"] = "Please enter all Details Before StartAll is Clicked.";
-        //                return RedirectToAction("Index");
-        //            }
-        //        }
-        //        else
-        //        {
-        //            Session["VError"] = "WorkOrder is already Started.";
-        //            return RedirectToAction("Index");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        Session["VError"] = "Please end HOLD before Start";
-        //        return RedirectToAction("Index");
-        //    }
+                        Session["WorkOrderClicked"] = 0;
+                        hmiidData.Status = 0;
+                       // obj.UpdateLiv2HMIDetails(hmiidData.HMIID, Convert.ToDateTime(hmiidData.Date), Convert.ToInt32(hmiidData.Status), hmiidData.isWorkOrder);
+                        //db.Entry(hmiidData).State = System.Data.Entity.EntityState.Modified;
+                        //db.SaveChanges();
+                    }
+                    else
+                    {
+                        Session["VError"] = "Please enter all Details Before StartAll is Clicked.";
+                        return RedirectToAction("Index");
+                    }
+                }
+                else
+                {
+                    Session["VError"] = "WorkOrder is already Started.";
+                    return RedirectToAction("Index");
+                }
+            }
+            else
+            {
+                Session["VError"] = "Please end HOLD before Start";
+                return RedirectToAction("Index");
+            }
 
-        //    return RedirectToAction("Index");
-        //}
+            return RedirectToAction("Index");
+        }
         #endregion
 
         public ActionResult IndividualHold(int HMIID = 0, int cjtextbox8 = 0)
@@ -12031,15 +12034,30 @@ namespace i_facility.Controllers
             {
                 maxBatchNo += 1;
             }
+
+            Session["ERRORMulti"] = null;
             foreach (var item in ids)
             {
                 int hmid = Convert.ToInt32(item);
                 var check = obj.GettbllivehmiscreensDet5(hmid);
+
                 if (check != null)
                 {
-                    int batchCount = batchcount.Count();
-                    DateTime st = DateTime.Now;
-                    var hmIncrease = obj.GetHMIDet5(hmid, maxBatchNo, st, 1, 0, 0);
+                    IndividualSubmit(hmid);
+
+                    if (Session["VError"] == null)
+                    {
+
+                    }
+                   
+                    else
+                    {
+                        Session["ERRORMulti"] = Session["VError"];
+
+                        Session["Error"] = Session["VError"];
+                        Session["VError"] = "";
+                    }
+
                     // var hmIncrease = db.tbllivehmiscreens.Where(m => m.HMIID == hmid).FirstOrDefault();
                     //hmIncrease.batchNo = maxBatchNo;
                     //db.SaveChanges();
@@ -12047,6 +12065,25 @@ namespace i_facility.Controllers
                 else
                 {
                     var hmIncrease = obj.GetHMIDetDel(hmid);
+                }
+
+            }
+
+            foreach (var item in ids)
+            {
+                int hmid = Convert.ToInt32(item);
+                var check = obj.GettbllivehmiscreensDet5(hmid);
+
+                var error = Convert.ToString(Session["ERRORMulti"]);
+                if (check != null)
+                {
+                    if (Session["ERRORMulti"] == null)
+                    {
+                        int batchCount = batchcount.Count();
+                        DateTime st = DateTime.Now;
+                        var hmIncrease = obj.GetHMIDet5(hmid, maxBatchNo, st, 1, 0, 0);
+                        
+                    }
                 }
             }
             Session["Started"] = 1;
