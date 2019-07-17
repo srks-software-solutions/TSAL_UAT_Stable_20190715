@@ -4634,7 +4634,7 @@ namespace i_facilitylibrary.DAO
             {
                 string query = "SELECT MachineInvNo from [i_facility_TSAL].[dbo].tblmachinedetails WHERE ShopID = " + shopid + " and IsDeleted = 0 and CellID != " + cellid + " and !ManualWCID.HasValue";
                 query = "SELECT MachineInvNo from [i_facility_TSAL].[dbo].tblmachinedetails WHERE ShopID = " + shopid + " and IsDeleted = 0 and CellID != " + cellid + " and ManualWCID IS NULL";
-                query = "SELECT MachineInvNo from [i_facility_TSAL].[dbo].tblmachinedetails where  IsDeleted = 0  and ManualWCID is null";
+                query = "SELECT MachineInvNo from [i_facility_TSAL].[dbo].tblmachinedetails where ShopID = " + shopid + " and IsDeleted = 0  and ManualWCID is null";
                 det = _connectionFactory.GetConnection.QueryAsync<tblmachinedetail>(query).Result.ToList();
                 //return lista.GetList(query, _connectionFactory.GetConnection);
             }
